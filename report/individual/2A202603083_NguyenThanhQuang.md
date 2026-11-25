@@ -6,8 +6,8 @@
 
 - **Học viên:** Nguyễn Thanh Quang — **MSSV:** `2A202603083`.
 - **Task:** `D13-2A202603083`. **10 frame:** `s01f13`, `s01f40`, `s02f07`, `s02f30`, `s03f23`, `s03f56`, `s04f11`, `s04f50`, `s05f20`, `s05f44`.
-- **Kết quả Bảng A trước lần sửa CVAT:** 80 cuboid trên 10 frame; ít nhất là `s03f23` với 5 cuboid. Phiếu tự kiểm có 23/80 cuboid mang cảnh báo. Đây là cảnh báo để xem lại, không phải kết luận hộp sai.
-- Dòng hướng dẫn cấu hình cho biết username CVAT là `ThanhQuang`; môi trường làm việc hiện tại là Windows/PowerShell. Trình duyệt và phiên bản CVAT thực tế chưa được xác nhận.
+- **Kết quả sau lần `sync` mới nhất:** Bảng A có 80 cuboid trên 10 frame; ít nhất là `s03f23` với 5 cuboid. Phiếu tự kiểm có 23/80 cuboid mang cảnh báo. Đây là cảnh báo để xem lại, không phải kết luận hộp sai.
+- Dòng cấu hình cho biết username CVAT là `ThanhQuang`; môi trường làm việc là Windows/PowerShell. API cục bộ xác nhận phiên bản CVAT **2.74.1**. Trình duyệt dùng để mở CVAT chưa xác định được từ tệp trong repo.
 - Sau khi nhìn các ảnh minh chứng hiện có, độ tin cậy cao hơn ở hộp gần có nhiều điểm; thấp nhất ở các hộp xa/thưa và hộp có kích thước/class bất thường. Đây là đánh giá định tính từ ảnh và phiếu tự kiểm, không phải điểm chính xác.
 - Hai hộp ngoài phạm vi là `s01f13#8` (53,11 m) và `s03f23#3` (80,24 m). Cả hai cần được xử lý trong CVAT; với `s03f23`, cần có hộp khác hợp lệ trong phạm vi để vẫn đạt tối thiểu 5 cuboid ở frame.
 
@@ -77,12 +77,42 @@ Các ảnh T4 đều là ảnh trong task đang mở trên màn hình CVAT; riê
 
 Trong mẫu này, khoảng cách tăng từ 3,41 m lên 10,43 m (khoảng 3,1 lần) thì số điểm giảm từ 2.073 xuống 430 (còn khoảng 21%); ở 48,43 m còn 78 điểm. Xu hướng ít điểm hơn ở xa phù hợp với ví dụ slide, nhưng các vật khác class và kích thước nên không thể xem đây là phép so sánh cùng một vật hay một quy luật chính xác.
 
-Các số trong mục này là **trước lần sửa CVAT tiếp theo**: phiếu có 23/80 dòng gắn cờ; hai hộp ngoài phạm vi là `s01f13#8` (53,11 m) và `s03f23#3` (80,24 m). Không được loại hộp bằng cách sửa CSV; cần cập nhật annotation trên CVAT rồi chạy `sync`. Nếu bỏ `s03f23#3`, frame còn 4 hộp trong phạm vi, vì vậy cần thêm một vật thật trong phạm vi trước khi đồng bộ để đạt tối thiểu 5. Lịch sử chỉnh sửa CVAT không có trong repo nên chưa thể xác nhận hai hộp nào đã sửa sau preview/selfcheck, hoặc cờ nào đã được xem và chủ động giữ nguyên. MSSV bạn đổi kiểm và hai số đã đối chiếu cũng chưa được cung cấp.
+Các số trong mục này lấy từ **lần `sync` mới nhất**: phiếu có 23/80 dòng gắn cờ; hai hộp ngoài phạm vi vẫn là `s01f13#8` (53,11 m) và `s03f23#3` (80,24 m). Không được loại hộp bằng cách sửa CSV; cần cập nhật annotation trên CVAT rồi chạy `sync`. Nếu bỏ `s03f23#3`, frame còn 4 hộp trong phạm vi, vì vậy cần thêm một vật thật trong phạm vi trước khi đồng bộ để đạt tối thiểu 5. Lịch sử chỉnh sửa CVAT không có trong repo nên chưa thể xác nhận hộp/cờ nào đã được kiểm tra trực quan và chủ động giữ nguyên. MSSV bạn đổi kiểm và hai số đã đối chiếu cũng chưa được cung cấp.
+
+**Danh sách cảnh báo chất lượng sau lần sync mới nhất (cần rà soát trên CVAT):**
+
+| Frame, idx, class | Số liệu trong phiếu hiện tại | Việc cần kiểm tra |
+|---|---|---|
+| `s05f20#6` Bus | `dist_m = 41,47 m`; 73 điểm; ground gap `+0,99 m`; kích thước `4,592 × 2,364 × 1,783 m` | Sau sync, tâm/kích thước đã đổi và gap giảm từ `+1,90 m` xuống `+0,99 m`; vẫn cao và kích thước vẫn nhỏ đối với Bus. Cần kiểm tra vị trí, class và đáy. |
+| `s03f56#7` Car | `dist_m = 28,90 m`; 1.013 điểm; `12,435 × 3,100 × 2,843 m` | Kích thước lớn bất thường cho Car; kiểm tra có bao nhầm xe lớn/ghép nhiều vật hoặc sai class không. |
+| `s05f44#6` Car | `dist_m = 36,24 m`; 581 điểm; `10,217 × 2,984 × 3,012 m` | Kích thước lớn bất thường cho Car; đối chiếu toàn bộ vật trên ảnh camera và cloud. |
+| `s01f13#7` Bus | `dist_m = 37,26 m`; 10 điểm; `4,101 × 1,884 × 1,778 m` | Hộp rất nhỏ/thưa so với class Bus; kiểm tra class, phạm vi hộp và mức đủ điểm để gán. |
+| `s01f40#3` Car | `dist_m = 21,91 m`; 111 điểm; ground gap `+0,67 m`; `4,795 × 1,934 × 1,537 m` | Kích thước hợp lý hơn nhưng đáy lơ lửng; chỉnh z nếu ảnh Side/Front xác nhận. |
+| `s01f40#7` Car | `dist_m = 43,25 m`; 33 điểm; ground gap `+0,59 m`; `4,960 × 2,007 × 1,717 m` | Hộp xa, ít điểm và đáy lơ lửng; kiểm tra đủ bằng chứng 15–20% và vị trí đáy. |
+| `s01f13#1` Car | 21,0 m; 287 điểm; gap −0,33 m | Kiểm tra đáy có chìm so với mặt đường hay mặt đường ước lượng bị nhiễu. |
+| `s01f13#3` Pedestrian | 9,6 m; 260 điểm; gap +0,51 m; 289 điểm ngoài mép | Kiểm tra chiều cao, đáy, phạm vi hộp và điểm bên cạnh. |
+| `s01f13#4` Car | 18,2 m; 498 điểm; gap −0,39 m | Kiểm tra đáy có chìm. |
+| `s01f13#6` Car | 29,8 m; 139 điểm; rộng 2,53 m | Rộng hơn dải selfcheck của Car; xác nhận class và hộp có bao cả vật bên cạnh không. |
+| `s02f07#6` Car | 36,7 m; 75 điểm; 42 điểm ngoài mép | Hộp có thể quá chật hoặc có vật bên cạnh; kiểm tra trên point cloud. |
+| `s02f07#7` Car | 22,0 m; 294 điểm; rộng 2,33 m | Hơi vượt khoảng kiểm của Car; đối chiếu hình dạng thật. |
+| `s03f23#2` Car | 39,2 m; 85 điểm; gap −0,27 m | Kiểm tra đáy gần ngưỡng chìm. |
+| `s03f23#3` Bus | 80,2 m; 29 điểm; dài 5,01 m, cao 1,97 m | Vượt phạm vi 50 m và kích thước không hợp class Bus; xử lý trên CVAT. |
+| `s03f23#4` Car | 11,7 m; 539 điểm; dài 2,85 m, cao 1,01 m | Kích thước rất nhỏ cho Car; kiểm tra class/hộp. |
+| `s03f23#5` Car | 12,8 m; 912 điểm; cao 1,06 m | Chiều cao thấp hơn khoảng Car; kiểm tra vị trí đáy/nóc hộp. |
+| `s03f56#6` Car | 25,1 m; 314 điểm; rộng 2,58 m; 174 điểm ngoài mép | Kiểm tra kích thước và điểm ngoài mép; có thể hộp quá chật hoặc lấn vật bên cạnh. |
+| `s04f11#12` Bus | 35,3 m; 391 điểm; gap +0,33 m; 305 điểm ngoài mép | Kiểm tra phần hộp bị thiếu và liệu điểm ngoài mép thuộc Bus hay vật bên cạnh. |
+| `s04f50#4` Cyclist | 21,6 m; 65 điểm; gap +0,38 m; cao 0,98 m | Kiểm tra class, chiều cao và đáy. |
+| `s04f50#7` Car | 34,3 m; 29 điểm; gap +0,48 m | Hộp xa, ít điểm và lơ lửng; xác nhận đủ bằng chứng để giữ. |
+| `s05f20#5` Car | 28,1 m; 190 điểm; gap −0,31 m | Kiểm tra đáy có chìm. |
+| `s05f44#2` Car | 26,6 m; 240 điểm; 90 điểm ngoài mép | Kiểm tra hộp quá chật hoặc điểm thuộc xe bên cạnh. |
+| `s05f44#8` Car | 48,4 m; 78 điểm; gap −0,31 m | Hộp xa, ít điểm và đáy gần ngưỡng chìm; xác nhận khả năng nhìn thấy và vị trí đáy. |
+
+Đây là danh sách ưu tiên, không phải kết luận các hộp chắc chắn sai. Không chỉnh chỉ để hết cờ; lưu trong CVAT rồi chạy `sync` để cập nhật số liệu.
 
 ## 6. Ý nghĩa của nhãn, cách dùng AI và điều còn chưa chắc
 
 Nhãn 3D dùng mét vì mô hình cần vị trí, kích thước và khoảng cách vật thể trong không gian thực; pixel chỉ biểu diễn vị trí trên một ảnh camera và thay đổi theo góc nhìn/khoảng cách. Vật thưa điểm cần quy tắc riêng vì thiếu bằng chứng hình học có thể khiến người gán nhãn vẽ sai vị trí, kích thước hoặc class; chỉ nên vẽ khi phần nhìn thấy đủ hoặc ảnh camera cho cơ sở nhận dạng.
 
 - **AI:** ChatGPT/Codex; yêu cầu hỗ trợ hoàn tất báo cáo và rà soát các số liệu/ảnh minh chứng; dùng để tính lại thống kê, đối chiếu nội dung ảnh chụp CVAT và soạn bản nháp. Các kết luận từ ảnh cần học viên mở lại CVAT xác nhận trước khi nộp.
-- **Điều còn chưa chắc:** các ghi chú quan sát trực tiếp ở §2–§4, mapping ba ảnh T2 với frame/idx, nguồn ảnh T4, các cuboid đã sửa/giữ cảnh báo, đổi kiểm, trình duyệt và phiên bản CVAT chưa được cung cấp. Các mục này cần bổ sung từ ghi chép/CVAT trước khi xem báo cáo là bản cuối.
+- **Điều còn chưa chắc:** hướng trục được đánh dấu trực tiếp trên ảnh Top của hai frame đầu; mapping chính xác của ảnh T2-c; frame cụ thể của T4-3; vật/cờ nào đã được kiểm tra trực quan và chủ động giữ; thông tin đổi kiểm với bạn cùng lớp; và trình duyệt dùng mở CVAT. Phiên bản CVAT đã xác nhận là 2.74.1.
 - Hai hộp `s01f13#8` và `s03f23#3` đều vượt 50 m. Việc chỉnh chúng trên CVAT và đồng bộ Bảng A/phiếu tự kiểm chưa hoàn thành; không sửa tay CSV.
