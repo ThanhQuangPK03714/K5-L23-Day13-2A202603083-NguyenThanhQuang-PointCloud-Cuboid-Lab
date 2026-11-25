@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.png" alt="Day 13 Lab: đọc point cloud VF và vẽ cuboid 3D đầu tiên" width="100%">
+  <img src="docs/assets/hero.png" alt="# Day 13 Lab — 2A202603083 - Nguyễn Thanh Quang" width="100%">
 </p>
 
 # Day 13 Lab — Đọc point cloud VF và vẽ cuboid 3D đầu tiên
